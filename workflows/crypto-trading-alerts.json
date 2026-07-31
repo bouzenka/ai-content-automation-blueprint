@@ -1,0 +1,41 @@
+{
+  "name": "Crypto Trading Alerts (BTC/ETH/SOL)",
+  "description": "Fetches BTC/ETH/SOL price data from Binance, computes RSI/EMA signals, generates an Arabic summary via the Anthropic API, and sends alerts to Telegram.",
+  "trigger": {
+    "type": "schedule",
+    "interval": "every 15 minutes"
+  },
+  "nodes": [
+    {
+      "name": "Fetch Binance OHLCV",
+      "type": "HTTP Request",
+      "notes": "GET klines for BTCUSDT, ETHUSDT, SOLUSDT from Binance public API"
+    },
+    {
+      "name": "Compute RSI/EMA",
+      "type": "Function (JS)",
+      "notes": "Calculates RSI(14) and EMA(9/21) crossover signals per symbol"
+    },
+    {
+      "name": "Filter Signal Events",
+      "type": "IF",
+      "notes": "Passes through only when RSI crosses 30/70 or EMA9/21 crosses"
+    },
+    {
+      "name": "Generate Arabic Summary",
+      "type": "HTTP Request (Anthropic API)",
+      "notes": "Sends signal data to Claude, asks for a short Arabic market summary + risk note"
+    },
+    {
+      "name": "Send Telegram Alert",
+      "type": "Telegram",
+      "notes": "Posts the Arabic summary to the configured Telegram channel/chat"
+    }
+  ],
+  "config_placeholders": {
+    "binance_api_note": "Uses public market-data endpoints only (no API key required for OHLCV)",
+    "telegram_chat_id": "SET_IN_CONFIG",
+    "anthropic_api_key": "SET_IN_CONFIG (never commit real keys — use environment variables)"
+  },
+  "status": "documented blueprint — verify against the live n8n export before production use"
+}
