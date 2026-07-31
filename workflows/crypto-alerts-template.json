@@ -1,0 +1,44 @@
+{
+  "name": "Crypto Alerts Template",
+  "description": "Template structure for BTC/ETH/SOL price alerts using RSI/EMA signals, sent via Telegram. Replace placeholder node configs with real credentials in n8n (never commit real API keys/tokens here).",
+  "nodes": [
+    {
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "notes": "Runs every N minutes to check prices"
+    },
+    {
+      "name": "Binance - Get Price Data",
+      "type": "n8n-nodes-base.httpRequest",
+      "notes": "Fetch OHLCV candles for BTCUSDT / ETHUSDT / SOLUSDT from Binance public API"
+    },
+    {
+      "name": "Calculate RSI",
+      "type": "n8n-nodes-base.function",
+      "notes": "Compute RSI from candle closes"
+    },
+    {
+      "name": "Calculate EMA",
+      "type": "n8n-nodes-base.function",
+      "notes": "Compute EMA (e.g. 12/26 period) from candle closes"
+    },
+    {
+      "name": "Signal Condition",
+      "type": "n8n-nodes-base.if",
+      "notes": "Trigger alert only when RSI/EMA cross thresholds"
+    },
+    {
+      "name": "Generate Arabic Summary (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "notes": "Call Anthropic API to generate a short Arabic summary of the signal"
+    },
+    {
+      "name": "Send Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "notes": "Send the generated summary to the configured Telegram chat/channel"
+    }
+  ],
+  "connections": {
+    "note": "Define node-to-node connections here once real node IDs are set in n8n"
+  }
+}
